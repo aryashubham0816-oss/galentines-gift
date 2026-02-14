@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Happy Galentine's Day 💕</title>
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+
+/* Love Letter Envelope */
+.envelope-wrapper {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #ffd1dc 0%, #ffb6c1 100%);
+  z-index: 10000;
+  transition: opacity 1.5s ease-out;
+}
+
+.envelope-wrapper.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.envelope-container {
+  position: relative;
+  width: 450px;
+  height: 300px;
+  cursor: pointer;
+  perspective: 1000px;
+}
+
+.envelope {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.envelope-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe4e9 100%);
+  border: 3px solid #ff69b4;
+  border-radius: 5px;
+  box-shadow: 0 10px 40px rgba(255, 105, 180, 0.4);
+}
+
+.envelope-flap {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(180deg, #ff85b3 0%, #ff69b4 100%);
+  transform-origin: top center;
+  transition: transform 1s ease;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  border-left: 3px solid #ff69b4;
+  border-right: 3px solid #ff69b4;
+  z-index: 3;
+}
+
+.envelope-container.opening .envelope-flap {
+  transform: rotateX(-180deg);
+}
+
+.letter {
+  position: absolute;
+  width: 90%;
+  height: 95%;
+  background: white;
+  top: 2.5%;
+  left: 5%;
+  border-radius: 10px;
+  padding: 40px 30px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  transition: transform 1.2s ease, top 1.2s ease;
+}
+
+.envelope-container.opening .letter {
+  transform: translateY(-120px);
+  top: -40%;
+}
+
+.letter-content {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.letter-content h2 {
+  color: #c41e3a;
+  font-size: 36px;
+  margin-bottom: 15px;
+  font-family: 'Brush Script MT', cursive;
+}
+
+.letter-content p {
+  color: #8b3a62;
+  font-size: 20px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.tap-instruction {
+  color: #ff69b4;
+  font-size: 18px;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+  margin-top: 20px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.heart-float {
+  position: absolute;
+  font-size: 30px;
+  animation: floatHeart 3s ease-in-out infinite;
+}
+
+@keyframes floatHeart {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.seal {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: #ff1744;
+  border-radius: 50%;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  box-shadow: 0 3px 10px rgba(255, 23, 68, 0.5);
+  transition: opacity 0.5s ease;
+}
+
+.envelope-container.opening .seal {
+  opacity: 0;
+}
+
+/* Slideshow styles */
+.slideshow {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  padding: 60px;
+  box-sizing: border-box;
+  transition: opacity 1s ease-in-out;
+}
+.slide.active {
+  display: flex;
+}
+
+/* Different pink gradient backgrounds for each slide */
+.slide-1 { background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 100%); }
+.slide-2 { background: linear-gradient(135deg, #ffb3d9 0%, #ff99cc 100%); }
+.slide-3 { background: linear-gradient(135deg, #ffa6c9 0%, #ff8fb3 100%); }
+.slide-4 { background: linear-gradient(135deg, #ffcce0 0%, #ffb3d4 100%); }
+.slide-5 { background: linear-gradient(135deg, #ff99bb 0%, #ff80aa 100%); }
+.slide-6 { background: linear-gradient(135deg, #ffd6e8 0%, #ffcce5 100%); }
+.slide-7 { background: linear-gradient(135deg, #ffadd2 0%, #ff94c0 100%); }
+.slide-8 { background: linear-gradient(135deg, #ff85b3 0%, #ff6b9d 100%); }
+
+.slide-content {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  z-index: 2;
+  position: relative;
+}
+
+.slide-1 .slide-content {
+  justify-content: center;
+}
+
+.photo-side {
+  flex: 1;
+  max-width: 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo-side img {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 20px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+}
+
+.photo-side video {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 20px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+}
+
+.text-side {
+  flex: 1;
+  max-width: 45%;
+}
+
+.overlay {
+  background: rgba(255, 255, 255, 0.85);
+  padding: 50px;
+  border-radius: 25px;
+  color: #d63384;
+  box-shadow: 0 10px 40px rgba(214, 51, 132, 0.3);
+}
+
+h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #c41e3a;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+p {
+  font-size: 22px;
+  line-height: 1.8;
+  color: #8b3a62;
+}
+
+/* Floating Cherry Blossoms - MORE PROMINENT */
+.cherry-blossom {
+  position: absolute;
+  font-size: 48px;
+  animation: floatBlossom 10s linear infinite;
+  opacity: 1;
+  z-index: 999;
+  pointer-events: none;
+  filter: drop-shadow(2px 2px 4px rgba(255, 255, 255, 0.8));
+}
+@keyframes floatBlossom {
+  0% { 
+    transform: translateY(110vh) rotate(0deg); 
+    opacity: 0; 
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { 
+    transform: translateY(-20vh) rotate(360deg); 
+    opacity: 0; 
+  }
+}
+
+/* Floating Bubbles - MORE PROMINENT */
+.bubble {
+  position: absolute;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(255, 192, 203, 0.6));
+  border-radius: 50%;
+  animation: floatBubble 9s ease-in-out infinite;
+  opacity: 0.9;
+  z-index: 999;
+  pointer-events: none;
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 192, 203, 0.5);
+}
+@keyframes floatBubble {
+  0% { 
+    transform: translateY(110vh) translateX(0); 
+    opacity: 0; 
+  }
+  10% { opacity: 0.9; }
+  50% { transform: translateY(50vh) translateX(50px); }
+  90% { opacity: 0.9; }
+  100% { 
+    transform: translateY(-20vh) translateX(-50px); 
+    opacity: 0; 
+  }
+}
+
+/* Floating Hearts - MORE PROMINENT */
+.heart {
+  position: absolute;
+  font-size: 42px;
+  animation: floatHeart2 8s linear infinite;
+  opacity: 1;
+  z-index: 999;
+  pointer-events: none;
+  filter: drop-shadow(2px 2px 4px rgba(255, 105, 180, 0.6));
+}
+@keyframes floatHeart2 {
+  0% { 
+    transform: translateY(110vh) scale(0.5); 
+    opacity: 0; 
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { 
+    transform: translateY(-20vh) scale(1.5); 
+    opacity: 0; 
+  }
+}
+
+/* Sparkles - MORE PROMINENT */
+.sparkle {
+  position: absolute;
+  font-size: 36px;
+  animation: floatSparkle 7s linear infinite;
+  opacity: 1;
+  z-index: 999;
+  pointer-events: none;
+  filter: drop-shadow(1px 1px 3px rgba(255, 215, 0, 0.8));
+}
+@keyframes floatSparkle {
+  0% { 
+    transform: translateY(110vh) rotate(0deg) scale(0.5); 
+    opacity: 0; 
+  }
+  10% { opacity: 1; }
+  50% { transform: translateY(50vh) rotate(180deg) scale(1.2); }
+  90% { opacity: 1; }
+  100% { 
+    transform: translateY(-20vh) rotate(360deg) scale(0.5); 
+    opacity: 0; 
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Background Music -->
+<audio id="bgMusic" loop>
+  <source src="her_song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Love Letter Envelope -->
+<div class="envelope-wrapper" id="envelopeWrapper">
+  <div class="envelope-container" id="envelopeContainer">
+    <div class="envelope">
+      <div class="envelope-back"></div>
+      <div class="letter">
+        <div class="letter-content">
+          <div class="heart-float" style="top: 10px; left: 20px;">💕</div>
+          <div class="heart-float" style="top: 15px; right: 25px; animation-delay: 0.5s;">💖</div>
+          <h2>To My Dearest Friend 💌</h2>
+          <p>
+            A special message awaits you...<br>
+            Open this letter to see what's inside!
+          </p>
+          <div class="tap-instruction">✨ Tap to Open ✨</div>
+        </div>
+      </div>
+      <div class="envelope-flap"></div>
+      <div class="seal">💝</div>
+    </div>
+  </div>
+</div>
+
+<!-- Slideshow -->
+<div class="slideshow">
+  <!-- Slide 1 - NO PHOTO -->
+  <div class="slide slide-1 active">
+    <div class="slide-content">
+      <div class="overlay">
+        <h1>Happy Galentine's Day 💕</h1>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Slide 2 -->
+  <div class="slide slide-2">
+    <div class="slide-content">
+      <div class="photo-side">
+        <img src="clg_lab.jpeg" alt="Photo">
+      </div>
+      <div class="text-side">
+        <div class="overlay">
+          <p>
+          From our bachelor days to everything we're becoming now,<br>
+          we've grown, stumbled, laughed, and figured life out together.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Slide 3 - VIDEO -->
+  <div class="slide slide-3">
+    <div class="slide-content">
+      <div class="text-side">
+        <div class="overlay">
+          <p>
+          You were always my scooty passenger princess,<br>
+          turning every random ride into a therapy session or comedy show.
+          </p>
+        </div>
+      </div>
+      <div class="photo-side">
+        <video autoplay loop muted playsinline>
+          <source src="scooty_rides.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Slide 4 -->
+  <div class="slide slide-4">
+    <div class="slide-content">
+      <div class="photo-side">
+        <img src="passenger_princess.jpeg" alt="Photo">
+      </div>
+      <div class="text-side">
+        <div class="overlay">
+          <p>
+          Those little rides meant more than we realized.<br>
+          I miss that more than I can explain.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Slide 5 -->
+  <div class="slide slide-5">
+    <div class="slide-content">
+      <div class="text-side">
+        <div class="overlay">
+          <p>
+          You've been the giggle machine of our house,<br>
+          the energy that makes everything lighter,<br>
+          and the reason so many of my favorite memories exist.
+          </p>
+        </div>
+      </div>
+      <div class="photo-side">
+        <img src="giggle machine.jpg" alt="Photo">
+      </div>
+    </div>
+  </div>
+  
+  <!-- Slide 6 -->
+  <div class="slide slide-6">
+    <div class="slide-content">
+      <div class="photo-side">
+        <img src="my_cutest_chaos.jpeg" alt="Photo">
+      </div>
+      <div class="text-side">
+        <div class="overlay">
+          <p>
+          Life genuinely feels better when we are together.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Slide 7 -->
+  <div class="slide slide-7">
+    <div class="slide-content">
+      <div class="text-side">
+        <div class="overlay">
+          <p>
+          I'm grateful we found each other then —<br>
+          and even more grateful that we still choose each other now.<br><br>
+          <strong>Forever my girl. Always. 💗</strong>
+          </p>
+        </div>
+      </div>
+      <div class="photo-side">
+        <img src="kop_diaries.jpg" alt="Photo">
+      </div>
+    </div>
+  </div>
+  
+  <!-- Slide 8 - Video Slide -->
+  <div class="slide slide-8">
+    <div class="slide-content">
+      <div class="photo-side">
+        <video autoplay loop muted playsinline>
+          <source src="vck_video.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="text-side">
+        <div class="overlay">
+          <p>
+          Boyfriends will come and go but this!!!<br>
+          <strong style="font-size: 28px;">THIS is going to be FOREVER...</strong><br><br>
+          💕 Always and forever 💕
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Envelope opening animation
+const envelopeContainer = document.getElementById('envelopeContainer');
+const envelopeWrapper = document.getElementById('envelopeWrapper');
+const bgMusic = document.getElementById('bgMusic');
+let envelopeOpened = false;
+
+envelopeContainer.addEventListener('click', function() {
+  if (!envelopeOpened) {
+    envelopeOpened = true;
+    envelopeContainer.classList.add('opening');
+    
+    // Play background music
+    bgMusic.play().catch(function(error) {
+      console.log("Audio autoplay failed:", error);
+    });
+    
+    // Hide envelope after animation and start slideshow
+    setTimeout(() => {
+      envelopeWrapper.classList.add('hidden');
+      setTimeout(() => {
+        startSlideshow();
+        startFloatingElements();
+      }, 500);
+    }, 2000);
+  }
+});
+
+// Slideshow functionality
+let slides = document.querySelectorAll(".slide");
+let index = 0;
+let slideshowInterval;
+
+function changeSlide() {
+  slides.forEach(slide => slide.classList.remove("active"));
+  index = (index + 1) % slides.length;
+  slides[index].classList.add("active");
+  
+  // Play all videos when their slide becomes active
+  const activeSlide = slides[index];
+  const activeVideo = activeSlide.querySelector("video");
+  if (activeVideo) {
+    activeVideo.play();
+  }
+}
+
+function startSlideshow() {
+  slideshowInterval = setInterval(changeSlide, 5000);
+}
+
+// Floating elements
+function startFloatingElements() {
+  /* Cherry Blossoms */
+  function createCherryBlossom() {
+    const blossom = document.createElement("div");
+    blossom.classList.add("cherry-blossom");
+    blossom.innerHTML = "🌸";
+    blossom.style.left = Math.random() * 100 + "vw";
+    blossom.style.animationDuration = (Math.random() * 5 + 8) + "s";
+    document.body.appendChild(blossom);
+    setTimeout(() => blossom.remove(), 13000);
+  }
+
+  /* Bubbles */
+  function createBubble() {
+    const bubble = document.createElement("div");
+    bubble.classList.add("bubble");
+    const size = Math.random() * 60 + 40;
+    bubble.style.width = size + "px";
+    bubble.style.height = size + "px";
+    bubble.style.left = Math.random() * 100 + "vw";
+    bubble.style.animationDuration = (Math.random() * 4 + 7) + "s";
+    document.body.appendChild(bubble);
+    setTimeout(() => bubble.remove(), 12000);
+  }
+
+  /* Hearts */
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    const hearts = ["💗", "💖", "💕", "💓", "💝"];
+    heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (Math.random() * 4 + 6) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 11000);
+  }
+
+  /* Sparkles */
+  function createSparkle() {
+    const sparkle = document.createElement("div");
+    sparkle.classList.add("sparkle");
+    sparkle.innerHTML = "✨";
+    sparkle.style.left = Math.random() * 100 + "vw";
+    sparkle.style.animationDuration = (Math.random() * 3 + 5) + "s";
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 10000);
+  }
+
+  /* Create elements at intervals - MORE FREQUENT */
+  setInterval(createCherryBlossom, 400);
+  setInterval(createBubble, 500);
+  setInterval(createHeart, 350);
+  setInterval(createSparkle, 450);
+
+  /* Create initial batch - MORE ELEMENTS */
+  for (let i = 0; i < 10; i++) {
+    setTimeout(createCherryBlossom, i * 150);
+    setTimeout(createBubble, i * 200);
+    setTimeout(createHeart, i * 180);
+    setTimeout(createSparkle, i * 220);
+  }
+}
+</script>
+</body>
+</html>
